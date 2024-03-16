@@ -84,6 +84,7 @@ do
   echo $i >> "$GITHUB_WORKSPACE"/Local_Partition.txt
 done
 "$GITHUB_WORKSPACE"/tools/payload-dumper-go -o "$GITHUB_WORKSPACE"/Extra_dir/ "$GITHUB_WORKSPACE"/modn/payload.bin >/dev/null
+sudo ls "$GITHUB_WORKSPACE"/Extra_dir/
 echo " - 正在分解vendor"
 Start_Time
 info=$("$GITHUB_WORKSPACE"/tools/gettype -i "$GITHUB_WORKSPACE"/Extra_dir/vendor.img)
@@ -92,7 +93,7 @@ if [ "$info" == "ext" ]; then
 elif [ "$info" == "erofs" ]; then
   sudo "$GITHUB_WORKSPACE"/tools/extract.erofs -i "$GITHUB_WORKSPACE"/Extra_dir/vendor.img -o "$GITHUB_WORKSPACE"/Temporary -x >/dev/null
 fi
-rm -rf "$GITHUB_WORKSPACE"/Extra_dir/$i.img
+rm -rf "$GITHUB_WORKSPACE"/Extra_dir/vendor.img
 End_Time 分解vendor
 # 获取super下分区表
 echo " - 正在获取super下分区表"
@@ -112,7 +113,7 @@ do
     if [ "$info" == "ext" ]; then
       sudo python3 "$workfile"/tools/imgextractorLinux.py "$GITHUB_WORKSPACE"/Extra_dir/$i.img "$GITHUB_WORKSPACE"/Temporary >/dev/null
     elif [ "$info" == "erofs" ]; then
-      sudo "$workfile"/tools/extract.erofs -i "$GITHUB_WORKSPACE"/Extra_dir/$i.img -o "$GITHUB_WORKSPACE"/Temporary -x >/dev/null
+      sudo "$workfile"/tools/extract.erofs -i "$GITHUB_WORKSPACE"/Extra_dir/$i.img -o "$GITHUB_WORKSPACE"/Temporary -x
     fi
     rm -rf "$GITHUB_WORKSPACE"/Extra_dir/$i.img
     if [ $i = system ]; then
