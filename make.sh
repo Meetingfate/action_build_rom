@@ -549,6 +549,7 @@ lpmake $argvs
 End_Time 打包super
 for i in $(cat "$GITHUB_WORKSPACE"/super.txt);do
   rm -rf "$GITHUB_WORKSPACE"/images/$i.img
+  rm -rf "$GITHUB_WORKSPACE"/images/$i
 done
 
 sudo find "$GITHUB_WORKSPACE"/images/ -exec touch -t 200901010000.00 {} \;
