@@ -9,8 +9,8 @@ img_type="${6}"
 ext_rw="${7}"
 
 host=$(uname -n)
-ORIGN_ZIP_NAME=$(echo ${Bottom_URL} | cut -d"/" -f5)
-ZIP_NAME_Transplantation=$(echo ${URL} | cut -d"/" -f5)
+ORIGN_ZIP_NAME=$(echo ${Bottom_URL} | cut -d"/" -f5 | sed 's/\.zip.*/.zip/')
+ZIP_NAME_Transplantation=$(echo ${URL} | cut -d"/" -f5 | sed 's/\.zip.*/.zip/')
 
 Start_Time() {
 Start_ns=`date +'%s%N'`
