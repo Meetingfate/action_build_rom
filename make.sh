@@ -199,7 +199,7 @@ fi
 for kiko in $ukiicc
 do
 mkdir -p "$GITHUB_WORKSPACE"/boot/out
-mv -f "$GITHUB_WORKSPACE"/images/firmware-update/${ukiicc}.img "$GITHUB_WORKSPACE"/boot/boot.img
+mv -f "$GITHUB_WORKSPACE"/images/firmware-update/${kiko}.img "$GITHUB_WORKSPACE"/boot/boot.img
 cd "$GITHUB_WORKSPACE"/boot
 $magiskboot unpack -h "$GITHUB_WORKSPACE"/boot/boot.img 2>&1
 if [ -f ramdisk.cpio ]; then
@@ -237,7 +237,7 @@ if [ "$ramdisk" ];then
   esac
   $magiskboot repack $nocompflag "$GITHUB_WORKSPACE"/boot/boot.img "$GITHUB_WORKSPACE"/boot/out/boot.img 2>&1
 fi
-sudo cp -rf "$GITHUB_WORKSPACE"/boot/out/boot.img "$GITHUB_WORKSPACE"/images/firmware-update/${ukiicc}.img
+sudo cp -rf "$GITHUB_WORKSPACE"/boot/out/boot.img "$GITHUB_WORKSPACE"/images/firmware-update/${kiko}.img
 rm -rf "$GITHUB_WORKSPACE"/boot
 cd ..
 done
