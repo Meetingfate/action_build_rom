@@ -73,10 +73,10 @@ mkdir -p "$GITHUB_WORKSPACE"/images
 mkdir -p "$GITHUB_WORKSPACE"/images/config
 mkdir -p "$GITHUB_WORKSPACE"/zip
 Start_Time
-7z x "$GITHUB_WORKSPACE"/$ZIP_NAME_Transplantation -r -o"$GITHUB_WORKSPACE"/mod
-7z x "$GITHUB_WORKSPACE"/$ORIGN_ZIP_NAME -r -o"$GITHUB_WORKSPACE"/modn
-rm -rf "$GITHUB_WORKSPACE"/$ZIP_NAME_Transplantation
-rm -rf "$GITHUB_WORKSPACE"/$ORIGN_ZIP_NAME
+7z x "$GITHUB_WORKSPACE"/${ZIP_NAME_Transplantation} -r -o"$GITHUB_WORKSPACE"/mod
+7z x "$GITHUB_WORKSPACE"/${ORIGN_ZIP_NAME} -r -o"$GITHUB_WORKSPACE"/modn
+rm -rf "$GITHUB_WORKSPACE"/${ZIP_NAME_Transplantation}
+rm -rf "$GITHUB_WORKSPACE"/${ORIGN_ZIP_NAME}
 End_Time 解读下载rom
 mkdir -p "$GITHUB_WORKSPACE"/Extra_dir
 for i in $("$GITHUB_WORKSPACE"/tools/payload-dumper-go -l "$GITHUB_WORKSPACE"/modn/payload.bin)
