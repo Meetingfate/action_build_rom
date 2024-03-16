@@ -578,4 +578,7 @@ sudo mv "$GITHUB_WORKSPACE"/zip/miui_LMI_${datekk}.zip "$GITHUB_WORKSPACE"/zip/"
 echo -n "新包名为：${rom_name}"
 echo "NEW_PACKAGE_NAME=$rom_name" >> $GITHUB_ENV
 echo "MD5=${md5:0:32}" >> $GITHUB_ENV
-echo "安全补丁等级: $patchlevel\n移植构建底包: $predevice\n当前机型: $predevice_n\n包名为$rom_name" >> "$GITHUB_WORKSPACE"/file.log
+echo "安全补丁等级: $patchlevel" >> "$GITHUB_WORKSPACE"/file.log
+echo "移植构建底包: $predevice" >> "$GITHUB_WORKSPACE"/file.log
+echo "当前机型: $predevice_n" >> "$GITHUB_WORKSPACE"/file.log
+echo "包名为$rom_name" >> "$GITHUB_WORKSPACE"/file.log
