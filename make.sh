@@ -141,12 +141,12 @@ rm -rf "$GITHUB_WORKSPACE"/mod/payload.bin
 # 获取包信息
 for Mod_build_per in $(find "$GITHUB_WORKSPACE"/mod/ -type f -name 'metadata' 2>/dev/null | sed 's/^\.\///' | sort)
 do
-  patchlevel=$(cat $Mod_build_per 2>/dev/null | dos2unix | sed -n "s/^post-security-patch-level=//p" | head -n 1)
+  patchlevel=$(cat $Mod_build_per 2>/dev/null | dos2unix | sed -n "s/post-security-patch-level=//p" | head -n 1)
   predevice=$(cat $Mod_build_per 2>/dev/null | dos2unix | sed -n "s/^pre-device=//p" | head -n 1)
 done
 for Mod_build_per_kk in $(find "$GITHUB_WORKSPACE"/modn/ -type f -name 'metadata' 2>/dev/null | sed 's/^\.\///' | sort)
 do
-  patchlevel_n=$(cat $Mod_build_per_kk 2>/dev/null | dos2unix | sed -n "s/^post-security-patch-level=//p" | head -n 1)
+  patchlevel_n=$(cat $Mod_build_per_kk 2>/dev/null | dos2unix | sed -n "s/post-security-patch-level=//p" | head -n 1)
   predevice_n=$(cat $Mod_build_per_kk 2>/dev/null | dos2unix | sed -n "s/^pre-device=//p" | head -n 1)
 done
 
