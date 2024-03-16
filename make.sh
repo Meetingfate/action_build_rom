@@ -56,7 +56,7 @@ aria2c -x16 -j$(nproc) -U "Mozilla/5.0" -d "$GITHUB_WORKSPACE" ""${URL}""
 End_Time 下载待移植包
 Start_Time
 echo -e "\e[1;33m - 开始下载底包 \e[0m"
-aria2c -x16 -j$(nproc) -U "Mozilla/5.0" -d "$GITHUB_WORKSPACE" ""${VENDOR_URL}""
+aria2c -x16 -j$(nproc) -U "Mozilla/5.0" -d "$GITHUB_WORKSPACE" ""${Bottom_URL}""
 End_Time 下载底包
 # 系统包下载结束
 
