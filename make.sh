@@ -114,7 +114,7 @@ do
     if [ "$info" == "ext" ]; then
       sudo python3 "$GITHUB_WORKSPACE"/tools/imgextractorLinux.py "$GITHUB_WORKSPACE"/Extra_dir/$i.img "$GITHUB_WORKSPACE"/Temporary >/dev/null
     elif [ "$info" == "erofs" ]; then
-      sudo "$GITHUB_WORKSPACE"/tools/extract.erofs -i "$GITHUB_WORKSPACE"/Extra_dir/$i.img -o "$GITHUB_WORKSPACE"/Temporary -x
+      sudo "$GITHUB_WORKSPACE"/tools/extract.erofs -i "$GITHUB_WORKSPACE"/Extra_dir/$i.img -o "$GITHUB_WORKSPACE"/Temporary -x >/dev/null
     fi
     rm -rf "$GITHUB_WORKSPACE"/Extra_dir/$i.img
     End_Time 分解$i
