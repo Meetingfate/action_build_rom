@@ -336,18 +336,6 @@ sudo rm -rf "$GITHUB_WORKSPACE"/Temporary/vendor/recovery-from-boot.p
 sudo rm -rf "$GITHUB_WORKSPACE"/Temporary/vendor/bin/install-recovery.sh
 sudo unzip -o "$GITHUB_WORKSPACE"/tools/flashtools.zip -d "$GITHUB_WORKSPACE"/images >/dev/null
 sudo sed -i "s/mod_device/$predevice/g" "$GITHUB_WORKSPACE"/images/FlashWindows.bat
-# nfc修复
-for nfc_files in $(sudo find "$GITHUB_WORKSPACE"/images/product/pangu/system/ -iname "*nfc*")
-do
-  echo "找到文件: $nfc_files"
-  sudo rm -rf "$nfc_files"
-done
-for nfc_files_mod in $(sudo find "$GITHUB_WORKSPACE"/Temporary/product/pangu/system/ -iname "*nfc*")
-do
-  echo "找到文件: $nfc_files_mod"
-  nfc_mod=$(echo $nfc_files_mod | sed "s/Temporary/images/g")
-  sudo cp -rf "$nfc_files" $nfc_mod
-done
 if [[ "${Readaw}" == "true" ]];then
   iuhy="$GITHUB_WORKSPACE"/images/product/pangu/system
   sudo find "$iuhy" -type d | sed "s|$iuhy|/system/system|g" | sed 's/$/ u:object_r:system_file:s0/' >> "$GITHUB_WORKSPACE"/images/config/system_file_contexts
@@ -357,7 +345,6 @@ if [[ "${Readaw}" == "true" ]];then
   for mi_ext_build in $(sudo find "$GITHUB_WORKSPACE"/images/mi_ext -type f -name 'build.prop')
   do
     uu_ext=$(cat $mi_ext_build)
-    echo "$uu_ext"
     echo "$uu_ext" >> "$GITHUB_WORKSPACE"/images/product/etc/build.prop
   done
   sudo cp -rf "$GITHUB_WORKSPACE"/images/mi_ext/product/* "$GITHUB_WORKSPACE"/images/product/
