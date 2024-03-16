@@ -521,7 +521,7 @@ do
     echo -e "\e[1;31m - 当前打包读写，跳过打包: $i \e[0m"
   else
     img_size=$(du -sb "$GITHUB_WORKSPACE"/images/$i.img | awk {'print $1'})
-    argvs+="--partition "$i"_a:none:$img_size:qti_dynamic_partitions_a --image "$i"_a="$GITHUB_WORKSPACE"/images/${i}.img --partition "$i"_b:none:0:qti_dynamic_partitions_b --image "$i"_b="$GITHUB_WORKSPACE"/images/${i}_b.img "
+    argvs+="--partition "$i"_a:none:$img_size:qti_dynamic_partitions_a --image "$i"_a="$GITHUB_WORKSPACE"/images/${i}.img --partition "$i"_b:none:0:qti_dynamic_partition_b "
     uki_size=$(echo "$uki_size + $img_size" | bc)
   fi
 done
