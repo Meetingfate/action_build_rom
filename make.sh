@@ -532,6 +532,7 @@ do
     uki_size=$(echo "$uki_size + $img_size" | bc)
   fi
 done
+uki_size=$(echo "$uki_size + 104857600" | bc)
 argvs+="--device super:$uki_size "
 argvs+="--metadata-slots 3 "
 argvs+="--group qti_dynamic_partitions_a:$uki_size "
