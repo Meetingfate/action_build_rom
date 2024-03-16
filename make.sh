@@ -83,8 +83,9 @@ for i in $("$GITHUB_WORKSPACE"/tools/payload-dumper-go -l "$GITHUB_WORKSPACE"/mo
 do
   echo $i >> "$GITHUB_WORKSPACE"/Local_Partition.txt
 done
+Start_Time
 "$GITHUB_WORKSPACE"/tools/payload-dumper-go -o "$GITHUB_WORKSPACE"/Extra_dir/ "$GITHUB_WORKSPACE"/modn/payload.bin >/dev/null
-sudo ls "$GITHUB_WORKSPACE"/Extra_dir/
+End_Time 分解bin
 echo " - 正在分解vendor"
 Start_Time
 info=$("$GITHUB_WORKSPACE"/tools/gettype -i "$GITHUB_WORKSPACE"/Extra_dir/vendor.img)
@@ -110,6 +111,7 @@ do
     echo -e "\e[1;31m - 跳过分解: $i \e[0m"
   else
     Start_Time
+    echo " - 正在分解$i"
     info=$("$GITHUB_WORKSPACE"/tools/gettype -i "$GITHUB_WORKSPACE"/Extra_dir/$i.img)
     if [ "$info" == "ext" ]; then
       sudo python3 "$GITHUB_WORKSPACE"/tools/imgextractorLinux.py "$GITHUB_WORKSPACE"/Extra_dir/$i.img "$GITHUB_WORKSPACE"/Temporary >/dev/null
@@ -187,12 +189,12 @@ forbid_avb "$GITHUB_WORKSPACE"/Temporary/vendor/
 echo "修补boot"
 sudo chmod -R 777 "$GITHUB_WORKSPACE"/tools/magiskboot
 magiskboot="$GITHUB_WORKSPACE"/tools/magiskboot
-ukiicc=boot
+ukiicc="boot"
 if grep -q "init_boot" "$GITHUB_WORKSPACE"/Local_Partition.txt; then
-  ukiicc+=init_boot
+  ukiicc+=" init_boot"
 fi
 if grep -q "vendor_boot" "$GITHUB_WORKSPACE"/Local_Partition.txt; then
-  ukiicc+=vendor_boot
+  ukiicc+=" vendor_boot"
 fi
 for kiko in $ukiicc
 do
