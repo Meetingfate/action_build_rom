@@ -356,27 +356,6 @@ if [[ "${Readaw}" == "true" ]];then
   sudo cp -rf "$GITHUB_WORKSPACE"/images/mi_ext/system/* "$GITHUB_WORKSPACE"/images/system/system/
   sudo cp -rf "$GITHUB_WORKSPACE"/images/mi_ext/system_ext/* "$GITHUB_WORKSPACE"/images/system_ext/
 fi
-# 规范系统指纹
-for fingerprint_build in $(sudo find "$GITHUB_WORKSPACE"/images/ -type f -name 'build.prop')
-do
-uuic=$(echo "$fingerprint_build" | awk -F '/' '{ print $(NF-1) }')
-if [ $uuic = etc ]; then
-  uuic=$(echo "$fingerprint_build" | awk -F '/' '{ print $(NF-2) }')
-fi
-rom_brand=$(cat $fingerprint_build | grep 'ro.product.'"$uuic"'.brand=' | cut -d '=' -f 2)
-rom_name=$(cat $fingerprint_build | grep 'ro.product.'"$uuic"'.name=' | cut -d '=' -f 2)
-rom_device=$(cat $fingerprint_build | grep 'ro.product.'"$uuic"'.device=' | cut -d '=' -f 2)
-rom_build_version_release=$(cat $fingerprint_build | grep 'ro.'"$uuic"'.build.version.release=' | cut -d '=' -f 2)
-rom_build_id=$(cat $fingerprint_build | grep 'ro.'"$uuic"'.build.id=' | cut -d '=' -f 2)
-rom_build_version_incremental=$(cat $fingerprint_build | grep 'ro.'"$uuic"'.build.version.incremental=' | cut -d '=' -f 2)
-rom_build_type=$(cat $fingerprint_build | grep 'ro.'"$uuic"'.build.type=' | cut -d '=' -f 2)
-rom_build_tags=$(cat $fingerprint_build | grep 'ro.'"$uuic"'.build.tags=' | cut -d '=' -f 2)
-if [ ! -z $rom_device ];then
-  fingerprint=$(echo "$rom_brand/$rom_name/$rom_device:$rom_build_version_release/$rom_build_id/$rom_build_version_incremental:$rom_build_type/$rom_build_tags")
-  sudo sed -i 's|ro.'"$uuic"'.build.fingerprint=[^*]*|ro.'"$uuic"'.build.fingerprint='"$fingerprint"'|g' "$fingerprint_build"
-  echo "当前目录$uuic机型指纹为$fingerprint"
-fi
-done
 # 人脸修复
 for MiuiBiometric in $(sudo find "$GITHUB_WORKSPACE"/Temporary/product/ -type d -iname "*MiuiBiometric*")
 do
@@ -416,6 +395,27 @@ sudo rm -rf "$GITHUB_WORKSPACE"/Temporary/system
 sudo rm -rf "$GITHUB_WORKSPACE"/Temporary/system_ext
 sudo cp -rf "$GITHUB_WORKSPACE"/Temporary/* "$GITHUB_WORKSPACE"/images
 sudo rm -rf "$GITHUB_WORKSPACE"/Temporary
+# 规范系统指纹
+for fingerprint_build in $(sudo find "$GITHUB_WORKSPACE"/images/ -type f -name 'build.prop')
+do
+uuic=$(echo "$fingerprint_build" | awk -F '/' '{ print $(NF-1) }')
+if [ $uuic = etc ]; then
+  uuic=$(echo "$fingerprint_build" | awk -F '/' '{ print $(NF-2) }')
+fi
+rom_brand=$(cat $fingerprint_build | grep 'ro.product.'"$uuic"'.brand=' | cut -d '=' -f 2)
+rom_name=$(cat $fingerprint_build | grep 'ro.product.'"$uuic"'.name=' | cut -d '=' -f 2)
+rom_device=$(cat $fingerprint_build | grep 'ro.product.'"$uuic"'.device=' | cut -d '=' -f 2)
+rom_build_version_release=$(cat $fingerprint_build | grep 'ro.'"$uuic"'.build.version.release=' | cut -d '=' -f 2)
+rom_build_id=$(cat $fingerprint_build | grep 'ro.'"$uuic"'.build.id=' | cut -d '=' -f 2)
+rom_build_version_incremental=$(cat $fingerprint_build | grep 'ro.'"$uuic"'.build.version.incremental=' | cut -d '=' -f 2)
+rom_build_type=$(cat $fingerprint_build | grep 'ro.'"$uuic"'.build.type=' | cut -d '=' -f 2)
+rom_build_tags=$(cat $fingerprint_build | grep 'ro.'"$uuic"'.build.tags=' | cut -d '=' -f 2)
+if [ ! -z $rom_device ];then
+  fingerprint=$(echo "$rom_brand/$rom_name/$rom_device:$rom_build_version_release/$rom_build_id/$rom_build_version_incremental:$rom_build_type/$rom_build_tags")
+  sudo sed -i 's|ro.'"$uuic"'.build.fingerprint=[^*]*|ro.'"$uuic"'.build.fingerprint='"$fingerprint"'|g' "$fingerprint_build"
+  echo "当前目录$uuic机型指纹为$fingerprint"
+fi
+done
 End_Time ROM特征化共
 
 echo "打包img"
