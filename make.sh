@@ -195,7 +195,7 @@ elif grep -q "vendor_boot" "$GITHUB_WORKSPACE"/Local_Partition.txt; then
 elif grep -q "boot" "$GITHUB_WORKSPACE"/Local_Partition.txt; then
   ukiicc=boot
 fi
-mv -f "$GITHUB_WORKSPACE"/Temporary/firmware-update/${ukiicc}.img "$GITHUB_WORKSPACE"/boot/boot.img
+mv -f "$GITHUB_WORKSPACE"/images/firmware-update/${ukiicc}.img "$GITHUB_WORKSPACE"/boot/boot.img
 cd "$GITHUB_WORKSPACE"/boot
 $magiskboot unpack -h "$GITHUB_WORKSPACE"/boot/boot.img 2>&1
 if [ -f ramdisk.cpio ]; then
