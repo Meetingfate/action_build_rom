@@ -544,7 +544,7 @@ argvs+="--group qti_dynamic_partitions_a:$uki_size "
 argvs+="--group qti_dynamic_partitions_b:$uki_size "
 argvs+="--virtual-ab "
 argvs+="-F --output "$GITHUB_WORKSPACE"/images/super.img"
-lpmake $argvs
+"$GITHUB_WORKSPACE"/tools/lpmake $argvs
 
 End_Time 打包super
 for i in $(cat "$GITHUB_WORKSPACE"/super.txt);do
