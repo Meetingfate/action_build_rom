@@ -44,7 +44,7 @@ jobs:
           if [ -n "${{ github.event.inputs.OS_version }}" ]; then
               echo "OS_version=${{ github.event.inputs.OS_version }}" >> $GITHUB_ENV
           else
-              echo "OS_version=$(echo ${{ github.event.inputs.URL }} | cut -d"/" -f4)" >> $GITHUB_ENV
+              echo "OS_version=$(echo ${{ github.event.inputs.URL }} | cut -d'/' -f4)" >> $GITHUB_ENV
           fi
           echo "EXT4_RW=${{ github.event.inputs.EXT4_RW }}" >> $GITHUB_ENV
           echo "IMAGE_TYPE=${{ github.event.inputs.IMAGE_TYPE }}" >> $GITHUB_ENV
