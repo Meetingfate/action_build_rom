@@ -528,7 +528,7 @@ do
     echo -e "\e[1;31m - 当前打包读写，跳过打包: $i \e[0m"
   else
     img_size=$(du -sb "$GITHUB_WORKSPACE"/images/$i.img | awk {'print $1'})
-    argvs+="--partition "$i"_a:readonly:$img_size:qti_dynamic_partitions_a --image "$i"_a="$GITHUB_WORKSPACE"/images/${i}.img --partition "$i"_b:readonly:0:qti_dynamic_partition_b "
+    argvs+="--partition "$i"_a:readonly:$img_size:qti_dynamic_partitions_a --image "$i"_a="$GITHUB_WORKSPACE"/images/${i}.img --partition "$i"_b:readonly:0:qti_dynamic_partitions_b "
     uki_size=$(echo "$uki_size + $img_size" | bc)
   fi
 done
@@ -538,7 +538,6 @@ argvs+="--group qti_dynamic_partitions_a:$uki_size "
 argvs+="--group qti_dynamic_partitions_b:$uki_size "
 argvs+="--virtual-ab "
 argvs+="-F --output "$GITHUB_WORKSPACE"/images/super.img"
-echo $argvs
 "$GITHUB_WORKSPACE"/tools/lpmake $argvs
 
 End_Time 打包super
