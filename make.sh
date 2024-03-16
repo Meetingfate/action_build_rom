@@ -144,6 +144,18 @@ done
 rm -rf "$GITHUB_WORKSPACE"/modn/payload.bin
 rm -rf "$GITHUB_WORKSPACE"/mod/payload.bin
 
+# 获取包信息
+for Mod_build_per in $(find "$GITHUB_WORKSPACE"/mod/ -type f -name 'metadata' 2>/dev/null | sed 's/^\.\///' | sort)
+do
+  patchlevel=$(cat $Mod_build_per 2>/dev/null | dos2unix | sed -n "s/^post-security-patch-level=//p" | head -n 1)
+  predevice=$(cat $Mod_build_per 2>/dev/null | dos2unix | sed -n "s/^pre-device=//p" | head -n 1)
+done
+for Mod_build_per_kk in $(find "$GITHUB_WORKSPACE"/modn/ -type f -name 'metadata' 2>/dev/null | sed 's/^\.\///' | sort)
+do
+  patchlevel_n=$(cat $Mod_build_per_kk 2>/dev/null | dos2unix | sed -n "s/^post-security-patch-level=//p" | head -n 1)
+  predevice_n=$(cat $Mod_build_per_kk 2>/dev/null | dos2unix | sed -n "s/^pre-device=//p" | head -n 1)
+done
+
 echo "替换相关文件"
 Start_Time
 if [[ "${ext_rw}" == "true" && "${img_type}" == "ext" ]]; then
@@ -256,7 +268,7 @@ done
 rom_security=$(sudo cat "$GITHUB_WORKSPACE"/images/system/system/build.prop | grep 'ro.build.version.security_patch=' | cut -d '=' -f 2)
 sudo sed -i 's/ro.vendor.build.security_patch=[^*]*/ro.vendor.build.security_patch='"$rom_security"'/' "$GITHUB_WORKSPACE"/Temporary/vendor/build.prop
 rom_name=$(sudo cat "$GITHUB_WORKSPACE"/images/product/etc/build.prop | grep 'ro.product.product.name=' | cut -d '=' -f 2)
-sudo sed -i 's/'"$rom_name"'/lmi/' "$GITHUB_WORKSPACE"/images/product/etc/build.prop
+sudo sed -i 's/'"$rom_name"'/'"$predevice"'/' "$GITHUB_WORKSPACE"/images/product/etc/build.prop
 # 部分精简
 for files in MIGalleryLockscreen MIUIDriveMode MIUIDuokanReader MIUIGameCenter MIUINewHome MIUIYoupin Xinre SmartHome MiShop MiRadio MediaEditor BaiduIME iflytek.inputmethod MIService MIUIEmail
 do
@@ -329,7 +341,7 @@ Find_character ro.miui.product_to_cust
 sudo rm -rf "$GITHUB_WORKSPACE"/Temporary/vendor/recovery-from-boot.p
 sudo rm -rf "$GITHUB_WORKSPACE"/Temporary/vendor/bin/install-recovery.sh
 sudo unzip -o "$GITHUB_WORKSPACE"/tools/flashtools.zip -d "$GITHUB_WORKSPACE"/images >/dev/null
-sudo sed -i "s/mod_device/lmi/g" "$GITHUB_WORKSPACE"/images/FlashWindows.bat
+sudo sed -i "s/mod_device/$predevice/g" "$GITHUB_WORKSPACE"/images/FlashWindows.bat
 # nfc修复
 for nfc_files in $(sudo find "$GITHUB_WORKSPACE"/images/product/pangu/system/ -iname "*nfc*")
 do
@@ -406,13 +418,6 @@ done
 # 去除a14限制api低于23应用安装
 mod=$(find "$GITHUB_WORKSPACE"/sign/services/smali/ -type f -iname 'InstallPackageHelper.smali' 2>/dev/null | xargs grep -rl 'App package must target at least SDK version 23, but found ' | sed 's/^\.\///' | sort)
 sed -i "s/,\ 0x17/,\ 0x0/g" $mod
-if [[ "${rom_type}" == "pay" ]];then
-  echo "添加官改ROM系统ID验证....."
-  unzip -o "$GITHUB_WORKSPACE"/lmi_files/idyz.zip -d "$GITHUB_WORKSPACE"/sign/services/smali/classes2 >/dev/null
-  idyzkk=$(find "$GITHUB_WORKSPACE"/sign/services/smali/ -type f -iname 'SystemServer.smali' 2>/dev/null | sed 's/^\.\///' | sort)
-  num=`grep -n "invoke-virtual {v1, v2}, Landroid/content/Context;->setTheme(I)V" $idyzkk | sed -n "2p" | cut -d ":" -f 1`
-  sed -i "${num}a\    new-instance v0, Lcom/android/server/LonelyFoolCheck;\n\n    iget-object v2, p0, Lcom/android/server/SystemServer;->mSystemContext:Landroid/content/Context;\n\n    invoke-direct {v0, v2}, Lcom/android/server/LonelyFoolCheck;-><init>(Landroid/content/Context;)V" $idyzkk
-fi
 echo "反编译成功，开始回编译"
 $APKEditor b -f -i "$GITHUB_WORKSPACE"/sign/services -o "$GITHUB_WORKSPACE"/sign/services_out.jar 2>&1 1>&/dev/null
 cp -rf "$GITHUB_WORKSPACE"/sign/services_out.jar "$GITHUB_WORKSPACE"/images/system/system/framework/services.jar
@@ -558,7 +563,15 @@ Start_Time
 zstd -9 -f -q "$GITHUB_WORKSPACE"/images/super.img -o "$GITHUB_WORKSPACE"/images/super.zst --rm >/dev/null
 End_Time 压缩super
 
-sed -i "s/echo.正在刷入系统底层/package_extract_file \"${i}.img\" \"\/dev\/block\/bootdevice\/by-name\/$i\"/g" "$GITHUB_WORKSPACE"/images/META-INF/com/google/android/update-binary
+for ki in $(cat "$GITHUB_WORKSPACE"/Local_Partition.txt)
+do
+  for kk in $(cat "$GITHUB_WORKSPACE"/super.txt)
+  do
+    if [ $ki ! = $kk ];then
+      sed -i "s/echo.正在刷入系统底层/package_extract_file \"${ki}.img\" \"\/dev\/block\/bootdevice\/by-name\/$ik\"/g" "$GITHUB_WORKSPACE"/images/META-INF/com/google/android/update-binary
+    fi
+  done
+done
 
 Start_Time
 sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_LMI_${datekk}.zip "$GITHUB_WORKSPACE"/images/*
@@ -566,16 +579,6 @@ End_Time 合成刷机包
 sudo rm -rf "$GITHUB_WORKSPACE"/images
 md5=$(md5sum "$GITHUB_WORKSPACE"/zip/miui_LMI_${datekk}.zip)
 zipmd5=${md5:0:10}
-for Mod_build_per in $(find "$GITHUB_WORKSPACE"/mod/ -type f -name 'metadata' 2>/dev/null | sed 's/^\.\///' | sort)
-do
-  patchlevel=$(cat $Mod_build_per 2>/dev/null | dos2unix | sed -n "s/^post-security-patch-level=//p" | head -n 1)
-  predevice=$(cat $Mod_build_per 2>/dev/null | dos2unix | sed -n "s/^pre-device=//p" | head -n 1)
-done
-for Mod_build_per_kk in $(find "$GITHUB_WORKSPACE"/modn/ -type f -name 'metadata' 2>/dev/null | sed 's/^\.\///' | sort)
-do
-  patchlevel_n=$(cat $Mod_build_per_kk 2>/dev/null | dos2unix | sed -n "s/^post-security-patch-level=//p" | head -n 1)
-  predevice_n=$(cat $Mod_build_per_kk 2>/dev/null | dos2unix | sed -n "s/^pre-device=//p" | head -n 1)
-done
 mod_rom_device=$(echo ${predevice} | tr [:lower:] [:upper:])
 #定制rom包名
 rom_name="miui_"
