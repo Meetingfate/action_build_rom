@@ -98,7 +98,8 @@ End_Time 分解vendor
 # 获取super下分区表
 echo " - 正在获取super下分区表"
 fstab=$(sudo find "$GITHUB_WORKSPACE"/Temporary/vendor/ -name "fstab*")
-for file in $fstab; do
+for file in $fstab
+do
   sed '/^#/d;/^\//d;/overlay/d' $file > "$GITHUB_WORKSPACE"/test.txt
   awk '{print $1}' "$GITHUB_WORKSPACE"/test.txt | sort | uniq > "$GITHUB_WORKSPACE"/super.txt
   sed -i '/^$/d' "$GITHUB_WORKSPACE"/super.txt
@@ -117,7 +118,8 @@ do
     fi
     rm -rf "$GITHUB_WORKSPACE"/Extra_dir/$i.img
     if [ $i = system ]; then
-      for kk in $(sudo find "$GITHUB_WORKSPACE"/Temporary/system/ -name "build.prop"); do
+      for kk in $(sudo find "$GITHUB_WORKSPACE"/Temporary/system/ -name "build.prop")
+      do
         versionrelease=$(cat $kk 2>/dev/null | dos2unix | sed -n "s/build.version.release=//p" | head -n 1)
         if [ $versionrelease -lt 13 ]; then
           echo "错误，当前rom不支持一键移植"
