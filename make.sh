@@ -117,15 +117,6 @@ do
       sudo "$workfile"/tools/extract.erofs -i "$GITHUB_WORKSPACE"/Extra_dir/$i.img -o "$GITHUB_WORKSPACE"/Temporary -x
     fi
     rm -rf "$GITHUB_WORKSPACE"/Extra_dir/$i.img
-    if [ $i = system ]; then
-      for kk in $(sudo find "$GITHUB_WORKSPACE"/Temporary/system/ -name "build.prop")
-      do
-        versionrelease=$(cat $kk 2>/dev/null | dos2unix | sed -n "s/build.version.release=//p" | head -n 1)
-        if [ $versionrelease -lt 13 ]; then
-          echo "错误，当前rom不支持一键移植"
-          exit 1
-        fi
-      done
     End_Time 分解$i
   fi
 done
