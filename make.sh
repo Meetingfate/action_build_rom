@@ -549,7 +549,7 @@ for ki in $(cat "$GITHUB_WORKSPACE"/Local_Partition.txt)
 do
   for kk in $(cat "$GITHUB_WORKSPACE"/super.txt)
   do
-    if [ $ki ! = $kk ];then
+    if [ $ki != $kk ];then
       sed -i "s/echo.正在刷入系统底层/package_extract_file \"${ki}.img\" \"\/dev\/block\/bootdevice\/by-name\/$ik\"/g" "$GITHUB_WORKSPACE"/images/META-INF/com/google/android/update-binary
     fi
   done
