@@ -187,14 +187,16 @@ forbid_avb "$GITHUB_WORKSPACE"/Temporary/vendor/
 echo "修补boot"
 sudo chmod -R 777 "$GITHUB_WORKSPACE"/tools/magiskboot
 magiskboot="$GITHUB_WORKSPACE"/tools/magiskboot
-mkdir -p "$GITHUB_WORKSPACE"/boot/out
+ukiicc=boot
 if grep -q "init_boot" "$GITHUB_WORKSPACE"/Local_Partition.txt; then
-  ukiicc=init_boot
-elif grep -q "vendor_boot" "$GITHUB_WORKSPACE"/Local_Partition.txt; then
-  ukiicc=vendor_boot
-elif grep -q "boot" "$GITHUB_WORKSPACE"/Local_Partition.txt; then
-  ukiicc=boot
+  ukiicc+=init_boot
 fi
+if grep -q "vendor_boot" "$GITHUB_WORKSPACE"/Local_Partition.txt; then
+  ukiicc+=vendor_boot
+fi
+for kiko in $ukiicc
+do
+mkdir -p "$GITHUB_WORKSPACE"/boot/out
 mv -f "$GITHUB_WORKSPACE"/images/firmware-update/${ukiicc}.img "$GITHUB_WORKSPACE"/boot/boot.img
 cd "$GITHUB_WORKSPACE"/boot
 $magiskboot unpack -h "$GITHUB_WORKSPACE"/boot/boot.img 2>&1
@@ -211,6 +213,8 @@ if [ -f ramdisk.cpio ]; then
   chmod 755 ramdisk
   cd ramdisk
   EXTRACT_UNSAFE_SYMLINKS=1 cpio -d -F ../ramdisk.cpio -i 2>&1
+else
+  echo "No ramdisk found to unpack..."
 fi
 # 定制内核内fstab.qcom
 forbid_avb "$GITHUB_WORKSPACE"/boot/
@@ -234,6 +238,7 @@ fi
 sudo cp -rf "$GITHUB_WORKSPACE"/boot/out/boot.img "$GITHUB_WORKSPACE"/images/firmware-update/${ukiicc}.img
 rm -rf "$GITHUB_WORKSPACE"/boot
 cd ..
+done
 # 添加机型文件
 sudo rm -rf "$GITHUB_WORKSPACE"/images/product/etc/device_features/*
 sudo cp -f "$GITHUB_WORKSPACE"/Temporary/product/etc/device_features/* "$GITHUB_WORKSPACE"/images/product/etc/device_features/
