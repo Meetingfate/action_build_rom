@@ -558,8 +558,8 @@ do
   for kk in $(cat "$GITHUB_WORKSPACE"/super.txt)
   do
     if [ $ki != $kk ];then
-      sed -i "s/ui_print \"- 开始刷入系统底层\"/package_extract_file \"firmware-update\/${ki}.img\" \"\/dev\/block\/bootdevice\/by-name\/$ik\"/g" "$GITHUB_WORKSPACE"/images/META-INF/com/google/android/update-binary
-      sed -i "s/echo.正在刷入系统底层/bin\\Windows\\fastboot flash ${ki} firmware-update\/${ki}.img/g" "$GITHUB_WORKSPACE"/images/FlashWindows.bat
+      sed -i "/ui_print \"- 开始刷入系统底层\"/i package_extract_file \"firmware-update\/${ki}.img\" \"\/dev\/block\/bootdevice\/by-name\/${ki}\"" "$GITHUB_WORKSPACE"/images/META-INF/com/google/android/update-binary
+      sed -i "/echo\.正在刷入系统底层/i bin\\Windows\\fastboot flash ${ki} firmware-update\/${ki}.img" "$GITHUB_WORKSPACE"/images/FlashWindows.bat
     fi
   done
 done
