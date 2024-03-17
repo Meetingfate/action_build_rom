@@ -232,11 +232,11 @@ if [ -f ramdisk.cpio ]; then
     case $comp in
       cpio) nocompflag="-n";;
     esac
-    $magiskboot repack $nocompflag "$GITHUB_WORKSPACE"/boot/boot.img "$GITHUB_WORKSPACE"/boot/out/boot.img 2>&1
   fi
 else
   echo "No ramdisk found to unpack..."
 fi
+$magiskboot repack $nocompflag "$GITHUB_WORKSPACE"/boot/boot.img "$GITHUB_WORKSPACE"/boot/out/boot.img 2>&1
 sudo cp -rf "$GITHUB_WORKSPACE"/boot/out/boot.img "$GITHUB_WORKSPACE"/images/firmware-update/${kiko}.img
 rm -rf "$GITHUB_WORKSPACE"/boot
 cd ..
@@ -553,15 +553,11 @@ Start_Time
 zstd -9 -f -q "$GITHUB_WORKSPACE"/images/super.img -o "$GITHUB_WORKSPACE"/images/super.zst --rm >/dev/null
 End_Time 压缩super
 
-for ki in $(cat "$GITHUB_WORKSPACE"/Local_Partition.txt)
+comm -32 <(sort "$GITHUB_WORKSPACE"/Local_Partition.txt) <(sort "$GITHUB_WORKSPACE"/super.txt) > "$GITHUB_WORKSPACE"/ol.txt
+for ki in $(tac "$GITHUB_WORKSPACE"/ol.txt)
 do
-  for kk in $(cat "$GITHUB_WORKSPACE"/super.txt)
-  do
-    if [ $ki != $kk ];then
-      sed -i "/ui_print \"- 开始刷入系统底层\"/i package_extract_file \"firmware-update\/${ki}.img\" \"\/dev\/block\/bootdevice\/by-name\/${ki}\"" "$GITHUB_WORKSPACE"/images/META-INF/com/google/android/update-binary
-      sed -i "/echo\.正在刷入系统底层/i bin\\Windows\\fastboot flash ${ki} firmware-update\/${ki}.img" "$GITHUB_WORKSPACE"/images/FlashWindows.bat
-    fi
-  done
+  sed -i "/ui_print \"- 开始刷入系统底层\"/a package_extract_file \"firmware-update\/${ki}.img\" \"\/dev\/block\/bootdevice\/by-name\/${ki}\"" "$GITHUB_WORKSPACE"/images/META-INF/com/google/android/update-binary
+  sed -i "/echo\.正在刷入系统底层/a bin\\\Windows\\\fastboot flash ${ki} firmware-update\/${ki}.img" "$GITHUB_WORKSPACE"/images/FlashWindows.bat
 done
 
 Start_Time
