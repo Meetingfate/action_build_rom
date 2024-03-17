@@ -215,27 +215,27 @@ if [ -f ramdisk.cpio ]; then
   chmod 755 ramdisk
   cd ramdisk
   EXTRACT_UNSAFE_SYMLINKS=1 cpio -d -F ../ramdisk.cpio -i 2>&1
+  # 定制内核内fstab.qcom
+  forbid_avb "$GITHUB_WORKSPACE"/boot/
+  cd ""$GITHUB_WORKSPACE"/boot/ramdisk"
+  find | sed 1d | cpio -H newc -R 0:0 -o -F ../ramdisk-new.cpio
+  cd ..
+  if [ "$comp" ]; then
+    $magiskboot compress=$comp ramdisk-new.cpio 2>&1
+    if [ $? != 0 ] && $comp --help 2>/dev/null; then
+      $comp -9c ramdisk-new.cpio > ramdisk.cpio.$comp
+    fi
+  fi
+  ramdisk=$(ls ramdisk-new.cpio* 2>/dev/null | tail -n1)
+  if [ "$ramdisk" ];then
+    cp -f $ramdisk ramdisk.cpio
+    case $comp in
+      cpio) nocompflag="-n";;
+    esac
+    $magiskboot repack $nocompflag "$GITHUB_WORKSPACE"/boot/boot.img "$GITHUB_WORKSPACE"/boot/out/boot.img 2>&1
+  fi
 else
   echo "No ramdisk found to unpack..."
-fi
-# 定制内核内fstab.qcom
-forbid_avb "$GITHUB_WORKSPACE"/boot/
-cd ""$GITHUB_WORKSPACE"/boot/ramdisk"
-find | sed 1d | cpio -H newc -R 0:0 -o -F ../ramdisk-new.cpio
-cd ..
-if [ "$comp" ]; then
-  $magiskboot compress=$comp ramdisk-new.cpio 2>&1
-  if [ $? != 0 ] && $comp --help 2>/dev/null; then
-    $comp -9c ramdisk-new.cpio > ramdisk.cpio.$comp
-  fi
-fi
-ramdisk=$(ls ramdisk-new.cpio* 2>/dev/null | tail -n1)
-if [ "$ramdisk" ];then
-  cp -f $ramdisk ramdisk.cpio
-  case $comp in
-    cpio) nocompflag="-n";;
-  esac
-  $magiskboot repack $nocompflag "$GITHUB_WORKSPACE"/boot/boot.img "$GITHUB_WORKSPACE"/boot/out/boot.img 2>&1
 fi
 sudo cp -rf "$GITHUB_WORKSPACE"/boot/out/boot.img "$GITHUB_WORKSPACE"/images/firmware-update/${kiko}.img
 rm -rf "$GITHUB_WORKSPACE"/boot
@@ -269,7 +269,7 @@ done
 rom_security=$(sudo cat "$GITHUB_WORKSPACE"/images/system/system/build.prop | grep 'ro.build.version.security_patch=' | cut -d '=' -f 2)
 sudo sed -i 's/ro.vendor.build.security_patch=[^*]*/ro.vendor.build.security_patch='"$rom_security"'/' "$GITHUB_WORKSPACE"/Temporary/vendor/build.prop
 rom_name=$(sudo cat "$GITHUB_WORKSPACE"/images/product/etc/build.prop | grep 'ro.product.product.name=' | cut -d '=' -f 2)
-sudo sed -i 's/'"$rom_name"'/'"$predevice"'/' "$GITHUB_WORKSPACE"/images/product/etc/build.prop
+sudo sed -i 's/'"$rom_name"'/'"${predevice_n}"'/' "$GITHUB_WORKSPACE"/images/product/etc/build.prop
 # 部分精简
 for files in MIGalleryLockscreen MIUIDriveMode MIUIDuokanReader MIUIGameCenter MIUINewHome MIUIYoupin Xinre SmartHome MiShop MiRadio MediaEditor BaiduIME iflytek.inputmethod MIService MIUIEmail
 do
@@ -342,7 +342,7 @@ Find_character ro.miui.product_to_cust
 sudo rm -rf "$GITHUB_WORKSPACE"/Temporary/vendor/recovery-from-boot.p
 sudo rm -rf "$GITHUB_WORKSPACE"/Temporary/vendor/bin/install-recovery.sh
 sudo unzip -o "$GITHUB_WORKSPACE"/tools/flashtools.zip -d "$GITHUB_WORKSPACE"/images >/dev/null
-sudo sed -i "s/mod_device/$predevice/g" "$GITHUB_WORKSPACE"/images/FlashWindows.bat
+sudo sed -i "s/mod_device/${predevice_n}/g" "$GITHUB_WORKSPACE"/images/FlashWindows.bat
 if [[ "${Readaw}" == "true" ]];then
   iuhy="$GITHUB_WORKSPACE"/images/product/pangu/system
   sudo find "$iuhy" -type d | sed "s|$iuhy|/system/system|g" | sed 's/$/ u:object_r:system_file:s0/' >> "$GITHUB_WORKSPACE"/images/config/system_file_contexts
@@ -558,7 +558,8 @@ do
   for kk in $(cat "$GITHUB_WORKSPACE"/super.txt)
   do
     if [ $ki != $kk ];then
-      sed -i "s/echo.正在刷入系统底层/package_extract_file \"${ki}.img\" \"\/dev\/block\/bootdevice\/by-name\/$ik\"/g" "$GITHUB_WORKSPACE"/images/META-INF/com/google/android/update-binary
+      sed -i "s/ui_print \"- 开始刷入系统底层\"/package_extract_file \"firmware-update\/${ki}.img\" \"\/dev\/block\/bootdevice\/by-name\/$ik\"/g" "$GITHUB_WORKSPACE"/images/META-INF/com/google/android/update-binary
+      sed -i "s/echo.正在刷入系统底层/bin\\Windows\\fastboot flash ${ki} firmware-update\/${ki}.img/g" "$GITHUB_WORKSPACE"/images/FlashWindows.bat
     fi
   done
 done
