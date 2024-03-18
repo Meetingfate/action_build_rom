@@ -567,7 +567,6 @@ for i in $(cat "$GITHUB_WORKSPACE"/super.txt);do
   rm -rf "$GITHUB_WORKSPACE"/images/$i
 done
 
-sudo find "$GITHUB_WORKSPACE"/images/ -exec touch -t 200901010000.00 {} \;
 echo -e "\e[1;31m - 开始压缩super \e[0m"
 Start_Time
 zstd -9 -f -q "$GITHUB_WORKSPACE"/images/super.img -o "$GITHUB_WORKSPACE"/images/super.zst --rm >/dev/null
@@ -579,6 +578,7 @@ do
   sed -i "/ui_print \"- 开始刷入系统底层\"/a package_extract_file \"firmware-update\/${ki}.img\" \"\/dev\/block\/bootdevice\/by-name\/${ki}\"" "$GITHUB_WORKSPACE"/images/META-INF/com/google/android/update-binary
   sed -i "/echo\.正在刷入系统底层/a bin\\\Windows\\\fastboot flash ${ki}_ab firmware-update\/${ki}.img" "$GITHUB_WORKSPACE"/images/FlashWindows.bat
 done
+sudo find "$GITHUB_WORKSPACE"/images/ -exec touch -t 200901010000.00 {} \;
 
 Start_Time
 sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_LMI_${datekk}.zip "$GITHUB_WORKSPACE"/images/*
