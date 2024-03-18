@@ -605,5 +605,5 @@ echo "NEW_PACKAGE_NAME=$rom_name" >> $GITHUB_ENV
 echo "MD5=${md5:0:32}" >> $GITHUB_ENV
 echo "安全补丁等级: $patchlevel" >> "$GITHUB_WORKSPACE"/file.log
 echo "基于${predevice}_${buildincremental}移植构建" >> "$GITHUB_WORKSPACE"/file.log
-echo "使用底包${predevice_n}_${buildincremental}" >> "$GITHUB_WORKSPACE"/file.log
+echo "使用底包${predevice_n}_${buildincremental_n}" >> "$GITHUB_WORKSPACE"/file.log
 echo "包名为$rom_name" >> "$GITHUB_WORKSPACE"/file.log
