@@ -577,7 +577,7 @@ comm -32 <(sort "$GITHUB_WORKSPACE"/Local_Partition.txt) <(sort "$GITHUB_WORKSPA
 for ki in $(tac "$GITHUB_WORKSPACE"/ol.txt)
 do
   sed -i "/ui_print \"- 开始刷入系统底层\"/a package_extract_file \"firmware-update\/${ki}.img\" \"\/dev\/block\/bootdevice\/by-name\/${ki}\"" "$GITHUB_WORKSPACE"/images/META-INF/com/google/android/update-binary
-  sed -i "/echo\.正在刷入系统底层/a bin\\\Windows\\\fastboot flash ${ki} firmware-update\/${ki}.img" "$GITHUB_WORKSPACE"/images/FlashWindows.bat
+  sed -i "/echo\.正在刷入系统底层/a bin\\\Windows\\\fastboot flash ${ki}_ab firmware-update\/${ki}.img" "$GITHUB_WORKSPACE"/images/FlashWindows.bat
 done
 
 Start_Time
