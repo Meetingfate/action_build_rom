@@ -291,6 +291,24 @@ do
     fi
   fi
 done
+# 还原apex并修复可能导致的内部错误弹窗
+for lpo in $(find "$GITHUB_WORKSPACE"/Temporary/system_ext/apex/ -type f -iname "*vndk*")
+do
+  lpoii=$(echo $lpo | sed "s/Temporary/images/g")
+  sudo cp -rf $lpo $lpoii
+done
+sudo cp -rf "$GITHUB_WORKSPACE"/Temporary/system_ext/etc/vintf/manifest.xml "$GITHUB_WORKSPACE"/images/system_ext/etc/vintf/manifest.xml
+# 还原相机
+for cameramirm in $(find "$GITHUB_WORKSPACE"/images/product/app/ "$GITHUB_WORKSPACE"/images/product/priv-app/ -type f -iname "*miuicamera*.apk")
+do
+  RmMod=${cameramirm%/*.apk}
+  sudo rm -rf $RmMod
+done
+for camerami in $(find "$GITHUB_WORKSPACE"/Temporary/product/app/ "$GITHUB_WORKSPACE"/Temporary/product/priv-app/ -type f -iname "*miuicamera*.apk")
+do
+  kiko=$(echo $camerami | sed "s/Temporary/images/g")
+  sudo cp -rf $camerami $kiko
+done
 # 添加机型Overlay
 overlay=(DeviceConfig.apk
 SettingsRroDeviceSystemUiOverlay.apk
