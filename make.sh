@@ -143,11 +143,13 @@ rm -rf "$GITHUB_WORKSPACE"/mod/payload.bin
 # 获取包信息
 for Mod_build_per in $(find "$GITHUB_WORKSPACE"/mod/ -type f -name 'metadata' 2>/dev/null | sed 's/^\.\///' | sort)
 do
+  buildincremental=$(cat $Mod_build_per 2>/dev/null | dos2unix | sed -n "s/build-incremental=//p" | head -n 1)
   patchlevel=$(cat $Mod_build_per 2>/dev/null | dos2unix | sed -n "s/post-security-patch-level=//p" | head -n 1)
   predevice=$(cat $Mod_build_per 2>/dev/null | dos2unix | sed -n "s/^pre-device=//p" | head -n 1)
 done
 for Mod_build_per_kk in $(find "$GITHUB_WORKSPACE"/modn/ -type f -name 'metadata' 2>/dev/null | sed 's/^\.\///' | sort)
 do
+  buildincremental_n=$(cat $Mod_build_per_kk 2>/dev/null | dos2unix | sed -n "s/build-incremental=//p" | head -n 1)
   patchlevel_n=$(cat $Mod_build_per_kk 2>/dev/null | dos2unix | sed -n "s/post-security-patch-level=//p" | head -n 1)
   predevice_n=$(cat $Mod_build_per_kk 2>/dev/null | dos2unix | sed -n "s/^pre-device=//p" | head -n 1)
 done
@@ -602,6 +604,6 @@ echo -n "新包名为：${rom_name}"
 echo "NEW_PACKAGE_NAME=$rom_name" >> $GITHUB_ENV
 echo "MD5=${md5:0:32}" >> $GITHUB_ENV
 echo "安全补丁等级: $patchlevel" >> "$GITHUB_WORKSPACE"/file.log
-echo "移植构建底包: $predevice" >> "$GITHUB_WORKSPACE"/file.log
-echo "当前机型: $predevice_n" >> "$GITHUB_WORKSPACE"/file.log
+echo "基于${predevice}_${buildincremental}移植构建" >> "$GITHUB_WORKSPACE"/file.log
+echo "使用底包${predevice_n}_${buildincremental}" >> "$GITHUB_WORKSPACE"/file.log
 echo "包名为$rom_name" >> "$GITHUB_WORKSPACE"/file.log
